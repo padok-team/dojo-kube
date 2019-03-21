@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "rocketchat-web"
+  labels:
+    app: "rocketchat-web"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: "rocketchat-web"
+    spec:
+      containers:
+      - name: "rocketchat-web"
+        image: rocketchat/rocket.chat:latest
+        env:
+        - name: MONGO_URL
+          value: mongodb://rocketchat-database:27017/rocketchat
+        - name: ROOT_URL
+          value: http://0.0.0.0
+        ports:
+        - name: http
+          containerPort: 3000
+        livenessProbe:
+          httpGet:
+            path: /api/info
+            port: http
+          initialDelaySeconds: 60
+          timeoutSeconds: 5
